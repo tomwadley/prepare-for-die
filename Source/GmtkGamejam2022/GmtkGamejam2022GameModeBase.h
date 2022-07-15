@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Tile.h"
+#include "Die.h"
 #include "GameFramework/GameModeBase.h"
 #include "GmtkGamejam2022GameModeBase.generated.h"
 
@@ -13,12 +14,17 @@ class GMTKGAMEJAM2022_API AGmtkGamejam2022GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ATile> EmptyTile;
-
+	TSubclassOf<ADie> DieClass;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATile> EmptyTileClass;
+	
+protected:
 	virtual void BeginPlay() override;
 
 private:
+	TArray<ADie*> Dies;
 	TArray<TArray<ATile*>> Tiles;
 };
