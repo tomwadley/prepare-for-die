@@ -16,6 +16,12 @@ class GMTKGAMEJAM2022_API AGmtkGamejam2022GameModeBase : public AGameModeBase
 
 public:
 	UPROPERTY(EditAnywhere)
+	int Rows;
+
+	UPROPERTY(EditAnywhere)
+	int Columns;
+	
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<ADie> DieClass;
 	
 	UPROPERTY(EditAnywhere)
@@ -23,6 +29,8 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+
+	void SpawnDie();
 
 private:
 	TArray<ADie*> Dies;
