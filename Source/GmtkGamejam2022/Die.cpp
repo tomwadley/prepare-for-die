@@ -6,7 +6,14 @@
 
 ADie::ADie()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ADie::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
+{
+	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
+
+	RollRotationTimeline.TickTimeline(DeltaTime);
 }
 
 void ADie::BeginPlay()
@@ -35,6 +42,18 @@ void ADie::BeginPlay()
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
+	FOnTimelineFloat RollRotationCallback;
+	RollRotationCallback.BindUFunction(this, FName("RollRotationCallback"));
+
+	if (RollRotationCurve)
+	{
+		RollRotationTimeline.AddInterpFloat(RollRotationCurve, RollRotationCallback);
+	}
+	
+	FOnTimelineEvent RollRotationFinished;
+	RollRotationFinished.BindUFunction(this, FName("RollRotationFinished"));
+	RollRotationTimeline.SetTimelineFinishedFunc(RollRotationFinished);
+
 	//// demo below of setting the pivot point and rotating:
 	
 	for (ATile* Tile : Tiles)
@@ -49,9 +68,15 @@ void ADie::BeginPlay()
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepWorldTransform);
 	}
 
-	URotatingMovementComponent* Rotator = NewObject<URotatingMovementComponent>(PivotPoint);
-	Rotator->RotationRate = FRotator(30.f, 0.f, 0.f);
-	Rotator->RegisterComponent();
-	Rotator->Activate();
-	PivotPoint->AddInstanceComponent(Rotator);
+	RollRotationTimeline.Play();
+}
+
+void ADie::RollRotationCallback(float Value) const
+{
+	const FRotator Rotator = FRotator(Value, 0.f, 0.f);
+	PivotPoint->SetActorRotation(Rotator);
+}
+
+void ADie::RollRotationFinished()
+{
 }
