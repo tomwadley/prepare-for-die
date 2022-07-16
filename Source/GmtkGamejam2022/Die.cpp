@@ -1,6 +1,7 @@
 ﻿#include "Die.h"
 
 #include "GmtkGamejam2022GameModeBase.h"
+#include "GameFramework/RotatingMovementComponent.h"
 
 
 ADie::ADie()
@@ -13,29 +14,44 @@ void ADie::BeginPlay()
 	Super::BeginPlay();
 
 	const AGmtkGamejam2022GameModeBase* GameMode = Cast<AGmtkGamejam2022GameModeBase>(GetWorld()->GetAuthGameMode());
+
+	PivotPoint = GetWorld()->SpawnActor(AActor::StaticClass());
+	PivotPoint->SetRootComponent(NewObject<USceneComponent>(PivotPoint));
+	PivotPoint->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+	TArray<FTransform> TileTransforms = {
+		FTransform(FRotator3d(0, 0, 0), FVector(0.f, 0.f, ATile::HalfLength)),
+		FTransform(FRotator3d(-90.f, 0, 0), FVector(ATile::HalfLength, 0.f, 0.f)),
+		FTransform(FRotator3d(0, 0, 90.f), FVector(0.f, ATile::HalfLength, 0.f)),
+		FTransform(FRotator3d(0, 0, -90.f), FVector(0.f, -ATile::HalfLength, 0.f)),
+		FTransform(FRotator3d(90.f, 0, 0), FVector(-ATile::HalfLength, 0.f, 0.f)),
+		FTransform(FRotator3d(180.f, 0, 0), FVector(0.f, 0.f, -ATile::HalfLength))
+	};
+
+	for (FTransform Transform : TileTransforms)
+	{
+		ATile* Tile = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform));
+		Tiles.Add(Tile);
+		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepRelativeTransform);
+	}
+
+	//// demo below of setting the pivot point and rotating:
 	
-	const FTransform Transform1 = FTransform(FRotator3d(0, 0, 0), FVector(0.f, 0.f, ATile::HalfLength));
-	const FTransform Transform6 = FTransform(FRotator3d(180.f, 0, 0), FVector(0.f, 0.f, -ATile::HalfLength));
-	const FTransform Transform2 = FTransform(FRotator3d(-90.f, 0, 0), FVector(ATile::HalfLength, 0.f, 0.f));
-	const FTransform Transform5 = FTransform(FRotator3d(90.f, 0, 0), FVector(-ATile::HalfLength, 0.f, 0.f));
-	const FTransform Transform3 = FTransform(FRotator3d(0, 0, 90.f), FVector(0.f, ATile::HalfLength, 0.f));
-	const FTransform Transform4 = FTransform(FRotator3d(0, 0, -90.f), FVector(0.f, -ATile::HalfLength, 0.f));
-	
-	Side1 = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform1));
-	Side1->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	for (ATile* Tile : Tiles)
+	{
+		Tile->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	}
 
-	Side2 = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform2));
-	Side2->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	PivotPoint->SetActorLocation(GetActorLocation() + FVector(-50.f, -50.f, -50.f));
 
-	Side3 = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform3));
-	Side3->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	for (ATile* Tile : Tiles)
+	{
+		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepWorldTransform);
+	}
 
-	Side4 = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform4));
-	Side4->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-
-	Side5 = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform5));
-	Side5->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-	
-	Side6 = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform6));
-	Side6->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	URotatingMovementComponent* Rotator = NewObject<URotatingMovementComponent>(PivotPoint);
+	Rotator->RotationRate = FRotator(30.f, 0.f, 0.f);
+	Rotator->RegisterComponent();
+	Rotator->Activate();
+	PivotPoint->AddInstanceComponent(Rotator);
 }

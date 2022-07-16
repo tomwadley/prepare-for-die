@@ -18,20 +18,8 @@ protected:
 
 private:
 	UPROPERTY()
-	ATile* Side1;
+	AActor* PivotPoint;
 
 	UPROPERTY()
-	ATile* Side2;
-
-	UPROPERTY()
-	ATile* Side3;
-
-	UPROPERTY()
-	ATile* Side4;
-
-	UPROPERTY()
-	ATile* Side5;
-
-	UPROPERTY()
-	ATile* Side6;
+	TArray<ATile*> Tiles;
 };

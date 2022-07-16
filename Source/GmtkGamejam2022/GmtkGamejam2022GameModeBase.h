@@ -35,4 +35,6 @@ protected:
 private:
 	TArray<ADie*> Dies;
 	TArray<TArray<ATile*>> Tiles;
+
+	FVector GetCellLocation(int X, int Y) const;
 };
