@@ -1,12 +1,18 @@
 ﻿#include "Die.h"
 
-#include "GmtkGamejam2022GameModeBase.h"
 #include "GameFramework/RotatingMovementComponent.h"
 
 
 ADie::ADie()
 {
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ADie::Init(Board* B, const int32 C, const int32 R)
+{
+	_Board = B;
+	Column = C;
+	Row = R;
 }
 
 void ADie::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
@@ -36,22 +42,20 @@ void ADie::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AGmtkGamejam2022GameModeBase* GameMode = Cast<AGmtkGamejam2022GameModeBase>(GetWorld()->GetAuthGameMode());
-
 	InitPivotPoint();
 
 	TArray TileTransforms = {
 		FTransform(FRotator3d(0, 0, 0), FVector(0.f, 0.f, ATile::HalfLength)),
-		FTransform(FRotator3d(-90.f, 0, 0), FVector(ATile::HalfLength, 0.f, 0.f)),
-		FTransform(FRotator3d(0, 0, 90.f), FVector(0.f, ATile::HalfLength, 0.f)),
 		FTransform(FRotator3d(0, 0, -90.f), FVector(0.f, -ATile::HalfLength, 0.f)),
 		FTransform(FRotator3d(90.f, 0, 0), FVector(-ATile::HalfLength, 0.f, 0.f)),
-		FTransform(FRotator3d(180.f, 0, 0), FVector(0.f, 0.f, -ATile::HalfLength))
+		FTransform(FRotator3d(-90.f, 0, 0), FVector(ATile::HalfLength, 0.f, 0.f)),
+		FTransform(FRotator3d(0, 0, 90.f), FVector(0.f, ATile::HalfLength, 0.f)),
+		FTransform(FRotator3d(180.f, 0, 0), FVector(0.f, 0.f, -ATile::HalfLength)),
 	};
 
 	for (FTransform Transform : TileTransforms)
 	{
-		ATile* Tile = Cast<ATile>(GetWorld()->SpawnActor(GameMode->RandomTileClass(), &Transform));
+		ATile* Tile = Cast<ATile>(GetWorld()->SpawnActor(_Board->RandomTileClass(), &Transform));
 		Tiles.Add(Tile);
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	}
@@ -105,13 +109,21 @@ void ADie::RollRotationFinished()
 	
 	switch (RollDirection)
 	{
-	case North: LocationOffset = FVector(0.f, -ATile::Length, 0.f);
+	case North:
+		LocationOffset = FVector(0.f, -ATile::Length, 0.f);
+		Row--;
 		break;
-	case West: LocationOffset = FVector(-ATile::Length, 0.f, 0.f);
+	case West:
+		LocationOffset = FVector(-ATile::Length, 0.f, 0.f);
+		Column--;
 		break;
-	case South: LocationOffset = FVector(0.f, ATile::Length, 0.f);
+	case South:
+		LocationOffset = FVector(0.f, ATile::Length, 0.f);
+		Row++;
 		break;
-	case East: LocationOffset = FVector(ATile::Length, 0.f, 0.f);
+	case East:
+		LocationOffset = FVector(ATile::Length, 0.f, 0.f);
+		Column++;
 		break;
 	}
 	
@@ -124,6 +136,10 @@ void ADie::RollRotationFinished()
 	{
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepWorldTransform);
 	}
+	
+	const UINT BottomTileIndex = GetBottomTileIndex();
+	UClass* BottomTileClass = Tiles[BottomTileIndex]->GetClass();
+	_Board->UpdateCell(Column, Row, BottomTileClass);
 
 	RollRotationTimeline.PlayFromStart();
 }
@@ -156,4 +172,22 @@ void ADie::InitPivotPoint()
 	PivotPoint = GetWorld()->SpawnActor(AActor::StaticClass());
 	PivotPoint->SetRootComponent(NewObject<USceneComponent>(PivotPoint));
 	PivotPoint->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+UINT ADie::GetBottomTileIndex()
+{
+	UINT Result = 0;
+	double LowestZ = TNumericLimits<double>::Max();
+	
+	for (int i = 0; i < Tiles.Num(); i++)
+	{
+		const ATile* Tile = Tiles[i];
+		if (const double Z = Tile->GetTransform().GetLocation().Z; Z < LowestZ)
+		{
+			Result = i;
+			LowestZ = Z;
+		}
+	}
+
+	return Result;
 }

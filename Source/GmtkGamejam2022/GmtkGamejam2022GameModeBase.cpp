@@ -6,6 +6,21 @@ TSubclassOf<ATile> AGmtkGamejam2022GameModeBase::RandomTileClass()
 	return TileClasses[Index];
 }
 
+void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Row, const TSubclassOf<ATile> TileClass)
+{
+	if (Column < 0 || Column >= Columns || Row < 0 || Row >= Rows)
+	{
+		return;
+	}
+	
+	ATile* OldTile = Tiles[Column][Row];
+	OldTile->Destroy();
+	
+	const FVector Location = GetCellLocation(Column, Row);
+	ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(TileClass, &Location));
+	Tiles[Column][Row] = NewTile;
+}
+
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -31,13 +46,16 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 		}
 	}
 
-	SpawnDie();
+	SpawnDie(Columns, 1);
 }
 
-void AGmtkGamejam2022GameModeBase::SpawnDie()
+void AGmtkGamejam2022GameModeBase::SpawnDie(const int32 Column, const int32 Row)
 {
-	const FVector DieSpawnLocation = GetCellLocation(Columns, 1) + FVector(0.f, 0.f, ATile::HalfLength);
-	Dies.Add(Cast<ADie>(GetWorld()->SpawnActor(DieClass, &DieSpawnLocation)));
+	const FVector DieSpawnLocation = GetCellLocation(Column, Row) + FVector(0.f, 0.f, ATile::HalfLength);
+	ADie* Die = GetWorld()->SpawnActorDeferred<ADie>(DieClass, FTransform(DieSpawnLocation));
+	Die->Init(this, Column, Row);
+	Die->FinishSpawning(FTransform(DieSpawnLocation));
+	Dies.Add(Die);
 }
 
 FVector AGmtkGamejam2022GameModeBase::GetCellLocation(const int X, const int Y) const

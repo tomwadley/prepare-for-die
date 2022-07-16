@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Tile.h"
+#include "Board.h"
 #include "Die.generated.h"
 
 UCLASS()
@@ -13,6 +14,8 @@ class GMTKGAMEJAM2022_API ADie : public AActor
 
 public:
 	ADie();
+
+	void Init(Board* B, int32 C, int32 R);
 
 	virtual void TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;
 
@@ -39,6 +42,8 @@ private:
 	UPROPERTY()
 	TArray<ATile*> Tiles;
 
+	Board* _Board;
+
 	FTimeline RollRotationTimeline;
 	
 	ERollDirection RollDirection;
@@ -46,4 +51,9 @@ private:
 	void SetPivotPointLocation() const;
 
 	void InitPivotPoint();
+
+	UINT GetBottomTileIndex();
+
+	int32 Column;
+	int32 Row;
 };
