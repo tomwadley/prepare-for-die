@@ -8,17 +8,17 @@ TSubclassOf<ATile> AGmtkGamejam2022GameModeBase::RandomTileClass()
 
 void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Row, const TSubclassOf<ATile> TileClass)
 {
-	if (Column < 0 || Column >= Columns || Row < 0 || Row >= Rows)
+	if (Column >= 0 && Column < Columns && Row >= 0 && Row < Rows)
 	{
-		return;
+		ATile* OldTile = Tiles[Column][Row];
+		OldTile->Destroy();
+
+		const FVector Location = GetCellLocation(Column, Row);
+		ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(TileClass, &Location));
+		Tiles[Column][Row] = NewTile;
 	}
 	
-	ATile* OldTile = Tiles[Column][Row];
-	OldTile->Destroy();
-	
-	const FVector Location = GetCellLocation(Column, Row);
-	ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(TileClass, &Location));
-	Tiles[Column][Row] = NewTile;
+	DieLifecycleMgmt();
 }
 
 void AGmtkGamejam2022GameModeBase::BeginPlay()
@@ -46,16 +46,15 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 		}
 	}
 
-	SpawnDie(Columns, 1);
+	DieLifecycleMgmt();
 }
 
-void AGmtkGamejam2022GameModeBase::SpawnDie(const int32 Column, const int32 Row)
+void AGmtkGamejam2022GameModeBase::SpawnDie(const int32 Column, const int32 Row, const ADie::ERollDirection RollDirection)
 {
 	const FVector DieSpawnLocation = GetCellLocation(Column, Row) + FVector(0.f, 0.f, ATile::HalfLength);
-	ADie* Die = GetWorld()->SpawnActorDeferred<ADie>(DieClass, FTransform(DieSpawnLocation));
-	Die->Init(this, Column, Row);
+	Die = GetWorld()->SpawnActorDeferred<ADie>(DieClass, FTransform(DieSpawnLocation));
+	Die->Init(this, Column, Row, RollDirection);
 	Die->FinishSpawning(FTransform(DieSpawnLocation));
-	Dies.Add(Die);
 }
 
 FVector AGmtkGamejam2022GameModeBase::GetCellLocation(const int X, const int Y) const
@@ -67,4 +66,58 @@ FVector AGmtkGamejam2022GameModeBase::GetCellLocation(const int X, const int Y) 
 	const double YLoc = YOffset + Y * ATile::Length;
 
 	return FVector(XLoc, YLoc, 0.f);
+}
+
+void AGmtkGamejam2022GameModeBase::DieLifecycleMgmt()
+{
+	if (Die != nullptr &&
+		(
+			Die->GetColumn() >= Columns + OutOfBoundSize
+			|| Die->GetColumn() < -OutOfBoundSize
+			|| Die->GetRow() >= Rows + OutOfBoundSize
+			|| Die->GetRow() < -OutOfBoundSize))
+	{
+		Die->Destroy();
+		Die = nullptr;
+	}
+
+	if (Die == nullptr)
+	{
+		int32 Column;
+		int32 Row;
+		ADie::ERollDirection RollDirection;
+		
+		const bool Vertical = FMath::RandBool();
+		const bool Increasing = FMath::RandBool();
+		if (Vertical)
+		{
+			Column = FMath::RandRange(0, Columns - 1);
+			if (Increasing)
+			{
+				Row = -OutOfBoundSize - 1;
+				RollDirection = ADie::South;
+			}
+			else
+			{
+				Row = Rows + OutOfBoundSize;
+				RollDirection = ADie::North;
+			}
+		}
+		else
+		{
+			Row = FMath::RandRange(0, Rows - 1);
+			if (Increasing)
+			{
+				Column = -OutOfBoundSize - 1;
+				RollDirection = ADie::East;
+			}
+			else
+			{
+				Column = Columns + OutOfBoundSize;
+				RollDirection = ADie::West;
+			}
+		}
+		
+		SpawnDie(Column, Row, RollDirection);
+	}
 }

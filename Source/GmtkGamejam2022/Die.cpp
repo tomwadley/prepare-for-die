@@ -8,11 +8,12 @@ ADie::ADie()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ADie::Init(Board* B, const int32 C, const int32 R)
+void ADie::Init(Board* B, int32 C, int32 R, ADie::ERollDirection D)
 {
 	_Board = B;
 	Column = C;
 	Row = R;
+	InitRollDirection = D;
 }
 
 void ADie::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
@@ -20,6 +21,20 @@ void ADie::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& T
 	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
 
 	RollRotationTimeline.TickTimeline(DeltaTime);
+}
+
+void ADie::Destroyed()
+{
+	Super::Destroyed();
+	
+	for (ATile* Tile : Tiles)
+	{
+		Tile->Destroy();
+	}
+	if (PivotPoint != nullptr)
+	{
+		PivotPoint->Destroy();	
+	}
 }
 
 void ADie::SetRollDirection(const ERollDirection Direction)
@@ -36,6 +51,16 @@ void ADie::SetRollDirection(const ERollDirection Direction)
 	{
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepWorldTransform);
 	}
+}
+
+int32 ADie::GetColumn() const
+{
+	return Column;
+}
+
+int32 ADie::GetRow() const
+{
+	return Row;
 }
 
 void ADie::BeginPlay()
@@ -71,11 +96,8 @@ void ADie::BeginPlay()
 	FOnTimelineEvent RollRotationFinished;
 	RollRotationFinished.BindUFunction(this, FName("RollRotationFinished"));
 	RollRotationTimeline.SetTimelineFinishedFunc(RollRotationFinished);
-
-	//// demo below of starting die roll:
-
-	SetRollDirection(West);
 	
+	SetRollDirection(InitRollDirection);
 	RollRotationTimeline.Play();
 }
 

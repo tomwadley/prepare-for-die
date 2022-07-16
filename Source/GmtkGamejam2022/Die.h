@@ -15,16 +15,19 @@ class GMTKGAMEJAM2022_API ADie : public AActor
 public:
 	ADie();
 
-	void Init(Board* B, int32 C, int32 R);
+	enum ERollDirection { North, West, South, East};
+
+	void Init(Board* B, int32 C, int32 R, ERollDirection D);
 
 	virtual void TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;
+
+	virtual void Destroyed() override;
 
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* RollRotationCurve;
 
-	enum ERollDirection { North, West, South, East};
-
-	void SetRollDirection(const ERollDirection Direction);
+	int32 GetColumn() const;
+	int32 GetRow() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,6 +50,9 @@ private:
 	FTimeline RollRotationTimeline;
 	
 	ERollDirection RollDirection;
+	ERollDirection InitRollDirection;
+
+	void SetRollDirection(const ERollDirection Direction);
 
 	void SetPivotPointLocation() const;
 

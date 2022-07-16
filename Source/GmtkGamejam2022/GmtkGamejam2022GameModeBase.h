@@ -21,6 +21,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int Columns;
+
+	UPROPERTY(EditAnywhere)
+	int OutOfBoundSize;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ADie> DieClass;
@@ -35,19 +38,21 @@ public:
 	TSubclassOf<ATile> Resource2TileClass;
 
 	virtual TSubclassOf<ATile> RandomTileClass() override;
-
+	
 	virtual void UpdateCell(int32 Column, int32 Row, TSubclassOf<ATile> TileClass) override;
 
 protected:
 	virtual void BeginPlay() override;
 
-	void SpawnDie(int32 Column, int32 Row);
+	void SpawnDie(const int32 Column, const int32 Row, const ADie::ERollDirection RollDirection);
 
 private:
 	TArray<TSubclassOf<ATile>> TileClasses;
 	
-	TArray<ADie*> Dies;
+	ADie* Die;
 	TArray<TArray<ATile*>> Tiles;
 
 	FVector GetCellLocation(int X, int Y) const;
+
+	void DieLifecycleMgmt();
 };
