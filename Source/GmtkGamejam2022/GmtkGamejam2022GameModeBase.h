@@ -26,6 +26,14 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATile> EmptyTileClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATile> Resource1TileClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATile> Resource2TileClass;
+
+	TSubclassOf<ATile> RandomTileClass();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -33,6 +41,8 @@ protected:
 	void SpawnDie();
 
 private:
+	TArray<TSubclassOf<ATile>> TileClasses;
+	
 	TArray<ADie*> Dies;
 	TArray<TArray<ATile*>> Tiles;
 

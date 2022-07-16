@@ -1,8 +1,24 @@
 #include "GmtkGamejam2022GameModeBase.h"
 
+TSubclassOf<ATile> AGmtkGamejam2022GameModeBase::RandomTileClass()
+{
+	const int32 Index = FMath::RandRange(0, TileClasses.Num() - 1);
+	return TileClasses[Index];
+}
+
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TileClasses.Add(EmptyTileClass);
+	if (Resource1TileClass != nullptr)
+	{
+		TileClasses.Add(Resource1TileClass);		
+	}
+	if (Resource2TileClass != nullptr)
+	{
+		TileClasses.Add(Resource2TileClass);	
+	}
 	
 	for (int i = 0; i < Columns; i++)
 	{
@@ -10,7 +26,7 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 		for (int j = 0; j < Rows; j++)
 		{
 			FVector Location = GetCellLocation(i, j);
-			ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(EmptyTileClass, &Location));
+			ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(RandomTileClass(), &Location));
 			Tiles[i].Add(NewTile);
 		}
 	}

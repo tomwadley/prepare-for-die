@@ -36,7 +36,7 @@ void ADie::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const AGmtkGamejam2022GameModeBase* GameMode = Cast<AGmtkGamejam2022GameModeBase>(GetWorld()->GetAuthGameMode());
+	AGmtkGamejam2022GameModeBase* GameMode = Cast<AGmtkGamejam2022GameModeBase>(GetWorld()->GetAuthGameMode());
 
 	InitPivotPoint();
 
@@ -51,7 +51,7 @@ void ADie::BeginPlay()
 
 	for (FTransform Transform : TileTransforms)
 	{
-		ATile* Tile = Cast<ATile>(GetWorld()->SpawnActor(GameMode->EmptyTileClass, &Transform));
+		ATile* Tile = Cast<ATile>(GetWorld()->SpawnActor(GameMode->RandomTileClass(), &Transform));
 		Tiles.Add(Tile);
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	}
