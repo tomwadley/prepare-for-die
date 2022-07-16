@@ -19,6 +19,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* RollRotationCurve;
 
+	enum ERollDirection { North, West, South, East};
+
+	void SetRollDirection(const ERollDirection Direction);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -36,4 +40,10 @@ private:
 	TArray<ATile*> Tiles;
 
 	FTimeline RollRotationTimeline;
+	
+	ERollDirection RollDirection;
+
+	void SetPivotPointLocation() const;
+
+	void InitPivotPoint();
 };
