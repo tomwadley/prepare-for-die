@@ -21,6 +21,15 @@ void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Ro
 	DieLifecycleMgmt();
 }
 
+bool AGmtkGamejam2022GameModeBase::ContainsFence(const int32 Column, const int32 Row)
+{
+	if (Column >= 0 && Column < Columns && Row >= 0 && Row < Rows)
+	{
+		return Fences[Column][Row] != nullptr;
+	}
+	return false;
+}
+
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -38,11 +47,20 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 	for (int i = 0; i < Columns; i++)
 	{
 		Tiles.Add(TArray<ATile*>());
+		Fences.Add(TArray<ATile*>());
 		for (int j = 0; j < Rows; j++)
 		{
 			FVector Location = GetCellLocation(i, j);
+			
 			ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(RandomTileClass(), &Location));
 			Tiles[i].Add(NewTile);
+
+			ATile* FenceTile = nullptr;
+			if (FMath::RandRange(0, 4) == 0) // 20% chance for a fence
+			{
+				FenceTile = Cast<ATile>(GetWorld()->SpawnActor(FenceTileClass, &Location));
+			}
+			Fences[i].Add(FenceTile);
 		}
 	}
 

@@ -62,4 +62,7 @@ private:
 
 	int32 Column;
 	int32 Row;
+
+	static int32 GetColumnOffset(ERollDirection RollDirection);
+	static int32 GetRowOffset(ERollDirection RollDirection);
 };

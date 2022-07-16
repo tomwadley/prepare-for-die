@@ -128,28 +128,28 @@ void ADie::RollRotationFinished()
 	}
 
 	FVector LocationOffset;
+	int32 ColumnOffset = GetColumnOffset(RollDirection);
+	int32 RowOffset = GetRowOffset(RollDirection);
 	
 	switch (RollDirection)
 	{
 	case North:
 		LocationOffset = FVector(0.f, -ATile::Length, 0.f);
-		Row--;
 		break;
 	case West:
 		LocationOffset = FVector(-ATile::Length, 0.f, 0.f);
-		Column--;
 		break;
 	case South:
 		LocationOffset = FVector(0.f, ATile::Length, 0.f);
-		Row++;
 		break;
 	case East:
 		LocationOffset = FVector(ATile::Length, 0.f, 0.f);
-		Column++;
 		break;
 	}
 	
 	SetActorLocation(GetActorLocation() + LocationOffset);
+	Column += ColumnOffset;
+	Row += RowOffset;
 	
 	InitPivotPoint();
 	SetPivotPointLocation();
@@ -162,6 +162,25 @@ void ADie::RollRotationFinished()
 	const UINT BottomTileIndex = GetBottomTileIndex();
 	UClass* BottomTileClass = Tiles[BottomTileIndex]->GetClass();
 	_Board->UpdateCell(Column, Row, BottomTileClass);
+
+	int RemainingAttempts = 16;
+	while (RemainingAttempts > 0 && _Board->ContainsFence(Column + ColumnOffset, Row + RowOffset))
+	{
+		switch (RollDirection)
+		{
+		case North: SetRollDirection(East);
+			break;
+		case West: SetRollDirection(North);
+			break;
+		case South: SetRollDirection(West);
+			break;
+		case East: SetRollDirection(South);
+			break;
+		}
+		ColumnOffset = GetColumnOffset(RollDirection);
+		RowOffset = GetRowOffset(RollDirection);
+		RemainingAttempts--;
+	}
 
 	RollRotationTimeline.PlayFromStart();
 }
@@ -212,4 +231,30 @@ UINT ADie::GetBottomTileIndex()
 	}
 
 	return Result;
+}
+
+int32 ADie::GetColumnOffset(const ERollDirection RollDirection)
+{
+	switch (RollDirection)
+	{
+	case West:
+		return -1;
+	case East:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+int32 ADie::GetRowOffset(const ERollDirection RollDirection)
+{
+	switch (RollDirection)
+	{
+	case North:
+		return -1;
+	case South:
+		return 1;
+	default:
+		return 0;
+	}
 }

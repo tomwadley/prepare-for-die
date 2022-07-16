@@ -37,9 +37,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATile> Resource2TileClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATile> FenceTileClass;
+
 	virtual TSubclassOf<ATile> RandomTileClass() override;
 	
 	virtual void UpdateCell(int32 Column, int32 Row, TSubclassOf<ATile> TileClass) override;
+
+	virtual bool ContainsFence(int32 Column, int32 Row) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,6 +56,7 @@ private:
 	
 	ADie* Die;
 	TArray<TArray<ATile*>> Tiles;
+	TArray<TArray<ATile*>> Fences;
 
 	FVector GetCellLocation(int X, int Y) const;
 
