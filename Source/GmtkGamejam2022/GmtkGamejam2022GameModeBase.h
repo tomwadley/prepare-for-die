@@ -49,6 +49,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Resource2WinCost;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Resource1FenceCost;
+
 	virtual TSubclassOf<ATile> RandomTileClass() override;
 	
 	virtual void UpdateCell(int32 Column, int32 Row, TSubclassOf<ATile> TileClass) override;
