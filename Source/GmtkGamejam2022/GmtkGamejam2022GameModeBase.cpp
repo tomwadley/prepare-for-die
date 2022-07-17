@@ -1,5 +1,7 @@
 #include "GmtkGamejam2022GameModeBase.h"
 
+#include "GmtkGamejam2022PlayerController.h"
+
 TSubclassOf<ATile> AGmtkGamejam2022GameModeBase::RandomTileClass()
 {
 	const int32 Index = FMath::RandRange(0, TileClasses.Num() - 1);
@@ -46,7 +48,7 @@ void AGmtkGamejam2022GameModeBase::HitFence(int32 Column, int32 Row)
 	}
 }
 
-void AGmtkGamejam2022GameModeBase::PlaceFence(int32 Column, int32 Row)
+void AGmtkGamejam2022GameModeBase::BuyFence(int32 Column, int32 Row)
 {
 	if (Column < 0 || Column >= Columns || Row < 0 || Row >= Rows)
 	{
@@ -56,10 +58,19 @@ void AGmtkGamejam2022GameModeBase::PlaceFence(int32 Column, int32 Row)
 	{
 		return;
 	}
+	if (Resource1 < Resource1FenceCost)
+	{
+		return;
+	}
+
+	Resource1 -= Resource1FenceCost;
 
 	const FVector Location = GetCellLocation(Column, Row);
 	ATile* FenceTile = Cast<ATile>(GetWorld()->SpawnActor(FenceTileClass, &Location));
 	Fences[Column][Row] = FenceTile;
+
+	AGmtkGamejam2022PlayerController* PlayerController = Cast<AGmtkGamejam2022PlayerController>(GetWorld()->GetFirstPlayerController());
+	PlayerController->LeavePlaceFenceMode();
 }
 
 void AGmtkGamejam2022GameModeBase::MineResource1()

@@ -1,5 +1,6 @@
 ﻿#include "Tile.h"
 
+#include "GmtkGamejam2022PlayerController.h"
 #include "GmtkGamejam2022GameModeBase.h"
 
 
@@ -23,9 +24,15 @@ void ATile::NotifyActorOnClicked(FKey ButtonPressed)
 	{
 		return;
 	}
+
+	AGmtkGamejam2022PlayerController* PlayerController = Cast<AGmtkGamejam2022PlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!PlayerController->IsPlaceFenceMode())
+	{
+		return;
+	}
 	
 	AGmtkGamejam2022GameModeBase* GameMode = Cast<AGmtkGamejam2022GameModeBase>(GetWorld()->GetAuthGameMode());
-	GameMode->PlaceFence(Column, Row);
+	GameMode->BuyFence(Column, Row);
 		
 	UE_LOG(LogTemp, Warning, TEXT("Tile clicked: %d, %d"), Column, Row);
 }

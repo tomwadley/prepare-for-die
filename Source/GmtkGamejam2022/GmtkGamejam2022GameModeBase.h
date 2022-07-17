@@ -60,7 +60,7 @@ public:
 
 	virtual void HitFence(int32 Column, int32 Row) override;
 
-	void PlaceFence(int32 Column, int32 Row);
+	void BuyFence(int32 Column, int32 Row);
 	
 	void MineResource1();
 	void MineResource2();
