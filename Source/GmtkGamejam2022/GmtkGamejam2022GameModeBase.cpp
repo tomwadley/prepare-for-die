@@ -23,8 +23,10 @@ TSubclassOf<ATile> AGmtkGamejam2022GameModeBase::RandomTileClass()
 	return TileClass;
 }
 
-void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Row, const TSubclassOf<ATile> TileClass)
+bool AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Row, const TSubclassOf<ATile> TileClass)
 {
+	bool Result = false;
+	
 	if (Column >= 0 && Column < Columns && Row >= 0 && Row < Rows)
 	{
 		ATile* OldTile = Tiles[Column][Row];
@@ -37,9 +39,12 @@ void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Ro
 		NewTile->FinishSpawning(FTransform(Location));
 		
 		Tiles[Column][Row] = NewTile;
+
+		Result = true;
 	}
 	
 	DieLifecycleMgmt();
+	return Result;
 }
 
 bool AGmtkGamejam2022GameModeBase::ContainsFence(const int32 Column, const int32 Row)

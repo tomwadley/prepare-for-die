@@ -29,6 +29,9 @@ public:
 	int32 GetColumn() const;
 	int32 GetRow() const;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DieLanded(bool OnBoard);
+
 protected:
 	virtual void BeginPlay() override;
 

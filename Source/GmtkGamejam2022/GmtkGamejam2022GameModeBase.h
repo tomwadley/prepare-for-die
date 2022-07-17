@@ -60,7 +60,7 @@ public:
 
 	virtual TSubclassOf<ATile> RandomTileClass() override;
 	
-	virtual void UpdateCell(int32 Column, int32 Row, TSubclassOf<ATile> TileClass) override;
+	virtual bool UpdateCell(int32 Column, int32 Row, TSubclassOf<ATile> TileClass) override;
 
 	virtual bool ContainsFence(int32 Column, int32 Row) override;
 

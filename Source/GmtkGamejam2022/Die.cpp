@@ -164,7 +164,9 @@ void ADie::RollRotationFinished()
 	
 	const UINT BottomTileIndex = GetBottomTileIndex();
 	UClass* BottomTileClass = Tiles[BottomTileIndex]->GetClass();
-	_Board->UpdateCell(Column, Row, BottomTileClass);
+	const bool OnBoard = _Board->UpdateCell(Column, Row, BottomTileClass);
+
+	DieLanded(OnBoard);
 
 	int RemainingAttempts = 16;
 	while (RemainingAttempts > 0 && _Board->ContainsFence(Column + ColumnOffset, Row + RowOffset))
