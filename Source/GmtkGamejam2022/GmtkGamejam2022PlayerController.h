@@ -13,6 +13,9 @@ class GMTKGAMEJAM2022_API AGmtkGamejam2022PlayerController : public APlayerContr
 
 public:
 	UFUNCTION(BlueprintCallable)
+	bool CanEnterPlaceFenceMode();
+	
+	UFUNCTION(BlueprintCallable)
 	void EnterPlaceFenceMode();
 
 	UFUNCTION(BlueprintCallable)
