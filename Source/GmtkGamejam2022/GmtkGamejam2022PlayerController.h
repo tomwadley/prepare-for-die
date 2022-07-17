@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LeftPlaceFenceMode();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void GameWon();
+
 	UFUNCTION(BlueprintCallable)
 	bool IsPlaceFenceMode();
 

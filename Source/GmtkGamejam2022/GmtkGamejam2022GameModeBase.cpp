@@ -101,6 +101,11 @@ void AGmtkGamejam2022GameModeBase::MineResource1()
 void AGmtkGamejam2022GameModeBase::MineResource2()
 {
 	Resource2 += ResourceMineQty;
+	if (Resource2 >= Resource2WinCost)
+	{
+		AGmtkGamejam2022PlayerController* PlayerController = Cast<AGmtkGamejam2022PlayerController>(GetWorld()->GetFirstPlayerController());
+		PlayerController->GameWon();
+	}
 }
 
 int32 AGmtkGamejam2022GameModeBase::GetResource1() const
@@ -176,6 +181,11 @@ void AGmtkGamejam2022GameModeBase::DieLifecycleMgmt()
 	{
 		Die->Destroy();
 		Die = nullptr;
+	}
+
+	if (Resource2 >= Resource2WinCost)
+	{
+		return;
 	}
 
 	if (Die == nullptr)
