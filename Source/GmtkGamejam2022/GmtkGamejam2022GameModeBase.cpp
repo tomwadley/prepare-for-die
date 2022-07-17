@@ -135,18 +135,12 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 		{
 			FVector Location = GetCellLocation(i, j);
 			
-			ATile* NewTile = GetWorld()->SpawnActorDeferred<ATile>(RandomTileClass(), FTransform(Location));
+			ATile* NewTile = GetWorld()->SpawnActorDeferred<ATile>(EmptyTileClass, FTransform(Location));
 			NewTile->Init(i, j, true);
 			NewTile->FinishSpawning(FTransform(Location));
 			
 			Tiles[i].Add(NewTile);
-
-			ATile* FenceTile = nullptr;
-			if (FMath::RandRange(0, 4) == 0) // 20% chance for a fence
-			{
-				FenceTile = Cast<ATile>(GetWorld()->SpawnActor(FenceTileClass, &Location));
-			}
-			Fences[i].Add(FenceTile);
+			Fences[i].Add(nullptr);
 		}
 	}
 }
