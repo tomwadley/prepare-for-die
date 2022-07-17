@@ -25,6 +25,9 @@ public:
 	
 	virtual void NotifyActorOnClicked(FKey ButtonPressed) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ResourceMined();
+	
 	UFUNCTION(BlueprintNativeEvent)
 	void FenceHitByDie();
 
@@ -38,5 +41,5 @@ private:
 
 	FTimerHandle ResourceTimer;
 	
-	void ResourceTimerCallback() const;
+	void ResourceTimerCallback();
 };

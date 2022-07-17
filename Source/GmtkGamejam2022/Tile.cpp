@@ -47,7 +47,7 @@ void ATile::BeginPlay()
 	}
 }
 
-void ATile::ResourceTimerCallback() const
+void ATile::ResourceTimerCallback()
 {
 	AGmtkGamejam2022GameModeBase* GameMode = Cast<AGmtkGamejam2022GameModeBase>(GetWorld()->GetAuthGameMode());
 
@@ -59,6 +59,8 @@ void ATile::ResourceTimerCallback() const
 		break;
 	default: ;
 	}
+
+	ResourceMined();
 	
 	const EResource R = Resource.GetValue();
 	UE_LOG(LogTemp, Warning, TEXT("Got resource %d from tile %d, %d"), R, Column, Row);
