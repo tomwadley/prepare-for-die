@@ -25,6 +25,9 @@ public:
 	
 	virtual void NotifyActorOnClicked(FKey ButtonPressed) override;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void FenceHitByDie();
+
 protected:
 	virtual void BeginPlay() override;
 

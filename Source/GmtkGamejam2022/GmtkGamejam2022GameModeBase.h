@@ -54,7 +54,9 @@ public:
 	virtual void UpdateCell(int32 Column, int32 Row, TSubclassOf<ATile> TileClass) override;
 
 	virtual bool ContainsFence(int32 Column, int32 Row) override;
-	
+
+	virtual void HitFence(int32 Column, int32 Row) override;
+
 	void PlaceFence(int32 Column, int32 Row);
 	
 	void MineResource1();

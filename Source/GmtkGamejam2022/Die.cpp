@@ -169,6 +169,8 @@ void ADie::RollRotationFinished()
 	int RemainingAttempts = 16;
 	while (RemainingAttempts > 0 && _Board->ContainsFence(Column + ColumnOffset, Row + RowOffset))
 	{
+		_Board->HitFence(Column + ColumnOffset, Row + RowOffset);
+		
 		switch (RollDirection)
 		{
 		case North: SetRollDirection(East);

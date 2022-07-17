@@ -34,6 +34,18 @@ bool AGmtkGamejam2022GameModeBase::ContainsFence(const int32 Column, const int32
 	return false;
 }
 
+void AGmtkGamejam2022GameModeBase::HitFence(int32 Column, int32 Row)
+{
+	if (Column >= 0 && Column < Columns && Row >= 0 && Row < Rows)
+	{
+		if (ATile* Fence = Fences[Column][Row]; Fence != nullptr)
+		{
+			Fence->FenceHitByDie();
+			Fences[Column][Row] = nullptr;
+		}
+	}
+}
+
 void AGmtkGamejam2022GameModeBase::PlaceFence(int32 Column, int32 Row)
 {
 	if (Column < 0 || Column >= Columns || Row < 0 || Row >= Rows)

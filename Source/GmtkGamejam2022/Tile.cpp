@@ -30,6 +30,11 @@ void ATile::NotifyActorOnClicked(FKey ButtonPressed)
 	UE_LOG(LogTemp, Warning, TEXT("Tile clicked: %d, %d"), Column, Row);
 }
 
+void ATile::FenceHitByDie_Implementation()
+{
+	Destroy();
+}
+
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
