@@ -57,6 +57,12 @@ public:
 	void MineResource1();
 	void MineResource2();
 
+	UFUNCTION(BlueprintCallable)
+	int32 GetResource1() const;
+	
+	UFUNCTION(BlueprintCallable)
+	int32 GetResource2() const;
+
 protected:
 	virtual void BeginPlay() override;
 

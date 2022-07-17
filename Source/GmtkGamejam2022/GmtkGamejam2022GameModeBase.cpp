@@ -60,6 +60,16 @@ void AGmtkGamejam2022GameModeBase::MineResource2()
 	Resource2 += ResourceMineQty;
 }
 
+int32 AGmtkGamejam2022GameModeBase::GetResource1() const
+{
+	return Resource1;
+}
+
+int32 AGmtkGamejam2022GameModeBase::GetResource2() const
+{
+	return Resource2;
+}
+
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
