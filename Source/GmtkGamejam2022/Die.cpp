@@ -80,7 +80,10 @@ void ADie::BeginPlay()
 
 	for (FTransform Transform : TileTransforms)
 	{
-		ATile* Tile = Cast<ATile>(GetWorld()->SpawnActor(_Board->RandomTileClass(), &Transform));
+		ATile* Tile = GetWorld()->SpawnActorDeferred<ATile>(_Board->RandomTileClass(), Transform);
+		Tile->Init(-1, -1, false);
+		Tile->FinishSpawning(Transform);
+		
 		Tiles.Add(Tile);
 		Tile->AttachToActor(PivotPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	}

@@ -14,7 +14,11 @@ void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Ro
 		OldTile->Destroy();
 
 		const FVector Location = GetCellLocation(Column, Row);
-		ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(TileClass, &Location));
+		
+		ATile* NewTile = GetWorld()->SpawnActorDeferred<ATile>(TileClass, FTransform(Location));
+		NewTile->Init(Column, Row, true);
+		NewTile->FinishSpawning(FTransform(Location));
+		
 		Tiles[Column][Row] = NewTile;
 	}
 	
@@ -28,6 +32,22 @@ bool AGmtkGamejam2022GameModeBase::ContainsFence(const int32 Column, const int32
 		return Fences[Column][Row] != nullptr;
 	}
 	return false;
+}
+
+void AGmtkGamejam2022GameModeBase::PlaceFence(int32 Column, int32 Row)
+{
+	if (Column < 0 || Column >= Columns || Row < 0 || Row >= Rows)
+	{
+		return;
+	}
+	if (Fences[Column][Row] != nullptr)
+	{
+		return;
+	}
+
+	const FVector Location = GetCellLocation(Column, Row);
+	ATile* FenceTile = Cast<ATile>(GetWorld()->SpawnActor(FenceTileClass, &Location));
+	Fences[Column][Row] = FenceTile;
 }
 
 void AGmtkGamejam2022GameModeBase::BeginPlay()
@@ -52,7 +72,10 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 		{
 			FVector Location = GetCellLocation(i, j);
 			
-			ATile* NewTile = Cast<ATile>(GetWorld()->SpawnActor(RandomTileClass(), &Location));
+			ATile* NewTile = GetWorld()->SpawnActorDeferred<ATile>(RandomTileClass(), FTransform(Location));
+			NewTile->Init(i, j, true);
+			NewTile->FinishSpawning(FTransform(Location));
+			
 			Tiles[i].Add(NewTile);
 
 			ATile* FenceTile = nullptr;

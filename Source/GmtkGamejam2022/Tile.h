@@ -14,4 +14,13 @@ public:
 	inline constexpr static double HalfLength = Length / 2.f;
 	
 	ATile();
+
+	void Init(int32 C, int32 R, bool I);
+
+	virtual void NotifyActorOnClicked(FKey ButtonPressed) override;
+
+private:
+	int32 Column;
+	int32 Row;
+	bool Interactable;
 };
