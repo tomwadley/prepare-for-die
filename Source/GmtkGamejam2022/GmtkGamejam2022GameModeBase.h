@@ -38,6 +38,12 @@ public:
 	TSubclassOf<ATile> Resource2TileClass;
 
 	UPROPERTY(EditAnywhere)
+	float Resource1TileProbability;
+
+	UPROPERTY(EditAnywhere)
+	float Resource2TileProbability;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATile> FenceTileClass;
 
 	UPROPERTY(EditAnywhere)
@@ -77,8 +83,6 @@ protected:
 	void SpawnDie(const int32 Column, const int32 Row, const ADie::ERollDirection RollDirection);
 
 private:
-	TArray<TSubclassOf<ATile>> TileClasses;
-	
 	ADie* Die;
 	TArray<TArray<ATile*>> Tiles;
 	TArray<TArray<ATile*>> Fences;

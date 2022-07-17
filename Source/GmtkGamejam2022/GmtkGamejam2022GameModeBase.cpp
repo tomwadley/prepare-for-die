@@ -4,8 +4,23 @@
 
 TSubclassOf<ATile> AGmtkGamejam2022GameModeBase::RandomTileClass()
 {
-	const int32 Index = FMath::RandRange(0, TileClasses.Num() - 1);
-	return TileClasses[Index];
+	TSubclassOf<ATile> TileClass;
+	
+	float R = FMath::RandRange(0.f, 1.f);
+	if (R < Resource1TileProbability)
+	{
+		TileClass = Resource1TileClass;
+	}
+	else if (R >= Resource1TileProbability && R < Resource1TileProbability + Resource2TileProbability)
+	{
+		TileClass = Resource2TileClass;
+	}
+	else
+	{
+		TileClass = EmptyTileClass;
+	}
+
+	return TileClass;
 }
 
 void AGmtkGamejam2022GameModeBase::UpdateCell(const int32 Column, const int32 Row, const TSubclassOf<ATile> TileClass)
@@ -96,16 +111,6 @@ int32 AGmtkGamejam2022GameModeBase::GetResource2() const
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TileClasses.Add(EmptyTileClass);
-	if (Resource1TileClass != nullptr)
-	{
-		TileClasses.Add(Resource1TileClass);		
-	}
-	if (Resource2TileClass != nullptr)
-	{
-		TileClasses.Add(Resource2TileClass);	
-	}
 	
 	for (int i = 0; i < Columns; i++)
 	{
