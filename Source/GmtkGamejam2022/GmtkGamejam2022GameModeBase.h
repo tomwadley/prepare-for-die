@@ -77,6 +77,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetResource2() const;
 
+	UFUNCTION(BlueprintCallable)
+	void StartGame();
+
 protected:
 	virtual void BeginPlay() override;
 

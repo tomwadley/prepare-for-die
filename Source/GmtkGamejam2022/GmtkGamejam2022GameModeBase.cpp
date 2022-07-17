@@ -113,6 +113,11 @@ int32 AGmtkGamejam2022GameModeBase::GetResource2() const
 	return Resource2;
 }
 
+void AGmtkGamejam2022GameModeBase::StartGame()
+{
+	DieLifecycleMgmt();
+}
+
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -139,8 +144,6 @@ void AGmtkGamejam2022GameModeBase::BeginPlay()
 			Fences[i].Add(FenceTile);
 		}
 	}
-
-	DieLifecycleMgmt();
 }
 
 void AGmtkGamejam2022GameModeBase::SpawnDie(const int32 Column, const int32 Row, const ADie::ERollDirection RollDirection)
