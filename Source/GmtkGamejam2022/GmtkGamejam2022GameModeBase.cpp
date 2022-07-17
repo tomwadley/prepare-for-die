@@ -50,6 +50,16 @@ void AGmtkGamejam2022GameModeBase::PlaceFence(int32 Column, int32 Row)
 	Fences[Column][Row] = FenceTile;
 }
 
+void AGmtkGamejam2022GameModeBase::MineResource1()
+{
+	Resource1 += ResourceMineQty;
+}
+
+void AGmtkGamejam2022GameModeBase::MineResource2()
+{
+	Resource2 += ResourceMineQty;
+}
+
 void AGmtkGamejam2022GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
